@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Hilda's 21st | Balloon Blast</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', 'Poppins', sans-serif;
+      background: radial-gradient(circle at 10% 30%, #0b1120, #0a0f1c, #030617);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      color: #ffffff;
+      padding: 16px;
+    }
+
+    /* LIQUID MORPHISM BG */
+    .liquid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .blob {
+      position: absolute;
+      filter: blur(70px);
+      animation: liquidFloat 22s infinite alternate ease-in-out;
+      opacity: 0.6;
+    }
+    .blob1 { width: 70vw; height: 70vw; top: -20vh; left: -25vw; background: radial-gradient(circle, rgba(255, 100, 180, 0.5), rgba(100, 150, 255, 0.35)); animation-duration: 26s; }
+    .blob2 { width: 85vw; height: 85vw; bottom: -30vh; right: -30vw; background: radial-gradient(circle, rgba(0, 210, 200, 0.45), rgba(255, 80, 140, 0.4)); animation-duration: 20s; animation-direction: alternate-reverse; }
+    .blob3 { width: 60vw; height: 60vw; top: 40%; left: 50%; background: radial-gradient(circle, rgba(255, 210, 90, 0.4), rgba(255, 80, 160, 0.35)); filter: blur(85px); animation-duration: 28s; }
+    @media (max-width: 768px) { .blob3 { display: none; } }
+    .blob4 { width: 55vw; height: 55vw; bottom: 15%; left: -15%; background: radial-gradient(circle, rgba(120, 80, 255, 0.4), rgba(0, 230, 200, 0.4)); animation-duration: 18s; }
+    @media (max-width: 768px) { .blob4 { display: none; } }
+
+    @keyframes liquidFloat {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 60% 40% 50% 50% / 45% 40% 60% 55%; }
+      100% { transform: translate(5%, 8%) scale(1.1) rotate(4deg); border-radius: 45% 55% 40% 60% / 55% 45% 55% 45%; }
+    }
+
+    /* ---------- LOADING SCREEN with custom message ---------- */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #020617, #000000);
+      z-index: 2000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(12px);
+      transition: opacity 0.8s cubic-bezier(0.34, 1.2, 0.64, 1), visibility 0.2s;
+      opacity: 1;
+      visibility: visible;
+    }
+    .loading-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .liquid-loader {
+      width: 130px;
+      height: 130px;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #ffdde1);
+      border-radius: 55% 45% 60% 40% / 45% 55% 40% 60%;
+      animation: morphingLoader 1.4s infinite alternate, pulseGlow 1.2s infinite;
+      box-shadow: 0 0 40px rgba(255, 120, 180, 0.8);
+      position: relative;
+    }
+    .liquid-loader::before, .liquid-loader::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 140, 200, 0.3), transparent 70%);
+      animation: emanationRings 1.6s infinite ease-out;
+    }
+    .liquid-loader::before { top: -20px; left: -20px; right: -20px; bottom: -20px; }
+    .liquid-loader::after { top: -40px; left: -40px; right: -40px; bottom: -40px; animation-duration: 2s; animation-delay: 0.3s; background: radial-gradient(circle, rgba(255, 200, 150, 0.2), transparent 80%); }
+    @keyframes emanationRings {
+      0% { transform: scale(0.6); opacity: 0.9; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+    @keyframes morphingLoader {
+      0% { border-radius: 55% 45% 60% 40% / 45% 55% 40% 60%; transform: scale(1) rotate(0deg); background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
+      100% { border-radius: 40% 60% 35% 65% / 65% 35% 65% 35%; transform: scale(1.12) rotate(12deg); background: linear-gradient(135deg, #ffb347, #ff6b6b, #ffdde1); }
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0px #ff66aa, 0 0 20px #ff99cc; }
+      100% { box-shadow: 0 0 50px #ff44aa, 0 0 35px #ffb3d9; }
+    }
+    .loading-text {
+      font-size: 1.7rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffe6f0, #ffb347);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: bounceText 0.9s infinite alternate;
+      letter-spacing: 2px;
+    }
+    @keyframes bounceText {
+      0% { transform: translateY(0px); text-shadow: 0 0 0px rgba(255,100,150,0); }
+      100% { transform: translateY(-8px); text-shadow: 0 0 15px #ff66aa; }
+    }
+    .loading-sub {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #ffcf9a;
+      background: rgba(0,0,0,0.4);
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* ---------- MAIN CONTENT (balloon fiesta) ---------- */
+    .birthday-container {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      transform: scale(0.96);
+      transition: opacity 1s ease, transform 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .birthday-container.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* GLASS CARD with floating animation */
+    .glass-card {
+      background: rgba(15, 25, 45, 0.5);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 2.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+      padding: 2rem 1.8rem;
+      max-width: 580px;
+      width: 100%;
+      text-align: center;
+      animation: floatCard 4s infinite ease-in-out;
+    }
+    @keyframes floatCard {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+    /* stagger children */
+    .glass-card > * {
+      opacity: 0;
+      animation: slideUpFade 0.6s forwards;
+    }
+    .birthday-icon { animation-delay: 0.05s; }
+    h1 { animation-delay: 0.1s; }
+    .age-badge { animation-delay: 0.2s; }
+    .birthday-date { animation-delay: 0.3s; }
+    .message { animation-delay: 0.4s; }
+    .signature { animation-delay: 0.55s; }
+    .year-badge { animation-delay: 0.65s; }
+    .btn-burst { animation-delay: 0.75s; }
+    .quiz-section { animation-delay: 0.85s; }
+
+    @keyframes slideUpFade {
+      0% { opacity: 0; transform: translateY(25px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Typography */
+    .birthday-icon { font-size: 3.8rem; background: linear-gradient(145deg, #ffb347, #ff6b6b); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 0.3rem; }
+    h1 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.8rem; background: linear-gradient(135deg, #fff5e6, #ffe6f0, #ffd6e8); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -1px; }
+    .age-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 100, 130, 0.4); backdrop-filter: blur(8px); padding: 0.5rem 1.3rem; border-radius: 60px; font-weight: 700; font-size: 1.2rem; margin: 0.7rem 0; border: 1px solid rgba(255, 215, 200, 0.7); }
+    .birthday-date { font-size: 0.9rem; background: rgba(0, 0, 0, 0.4); display: inline-flex; gap: 6px; padding: 0.3rem 1.2rem; border-radius: 40px; margin-bottom: 1.2rem; }
+    .message { font-size: 1rem; line-height: 1.6; margin: 1.2rem 0; }
+    .highlight { font-weight: 800; color: #ffcf9a; background: linear-gradient(120deg, #ffb34755, #ffa0c055); padding: 0 6px; border-radius: 20px; }
+    .signature { margin-top: 1.5rem; border-top: 1px dashed rgba(255,255,240,0.4); padding-top: 1rem; font-size: 0.95rem; }
+    .btn-burst { background: rgba(255, 240, 200, 0.3); border: 1px solid rgba(255, 200, 160, 0.9); padding: 0.75rem 1.5rem; border-radius: 60px; color: #fff0dc; cursor: pointer; font-weight: 700; font-size: 1rem; backdrop-filter: blur(5px); display: inline-flex; align-items: center; gap: 10px; margin-top: 0.5rem; transition: all 0.2s; }
+    .btn-burst:active { transform: scale(0.96); background: rgba(255, 180, 140, 0.7); }
+    .year-badge { font-size: 0.8rem; margin-top: 0.9rem; background: rgba(0,0,0,0.3); display: inline-block; padding: 0.2rem 1rem; border-radius: 30px; }
+
+    /* ---------- QUIZ SECTION (9+10 = 21) ---------- */
+    .quiz-section {
+      margin: 1.2rem 0 0.5rem;
+      background: rgba(255, 215, 180, 0.1);
+      border-radius: 2rem;
+      padding: 1rem;
+      border: 1px solid rgba(255, 200, 150, 0.4);
+      backdrop-filter: blur(4px);
+    }
+    .quiz-question {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .quiz-question span {
+      background: rgba(0,0,0,0.5);
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+    }
+    .quiz-btn {
+      background: linear-gradient(135deg, #ffb347aa, #ff6b6baa);
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      backdrop-filter: blur(4px);
+      margin-top: 5px;
+    }
+    .quiz-btn:active { transform: scale(0.95); background: #ff6b6b; }
+    .quiz-answer {
+      margin-top: 12px;
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffe6b0, #ffb347);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 60px;
+    }
+    .quiz-answer.show {
+      opacity: 1;
+      transform: scale(1);
+      animation: bouncePop 0.5s ease-out;
+    }
+    @keyframes bouncePop {
+      0% { transform: scale(0.2); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ---------- BALLOON EXPLOSION ---------- */
+    .balloon-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 15;
+      overflow: hidden;
+    }
+    .floating-balloon {
+      position: absolute;
+      bottom: -100px;
+      font-size: 2.8rem;
+      animation: riseUp 8s linear forwards;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+      z-index: 15;
+    }
+    @keyframes riseUp {
+      0% { bottom: -100px; opacity: 0; transform: translateX(0) rotate(0deg); }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { bottom: 110%; opacity: 0; transform: translateX(20px) rotate(15deg); }
+    }
+    .side-balloons {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      font-size: 2.2rem;
+      opacity: 0.9;
+      animation: sway 3.5s infinite ease-in-out;
+      pointer-events: none;
+      z-index: 12;
+    }
+    .side-balloons-left {
+      left: 12px;
+      right: auto;
+      animation: sway 4.5s infinite reverse;
+    }
+    @keyframes sway {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(5deg); }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 8px; }
+      .glass-card { padding: 1.5rem 1.2rem; }
+      h1 { font-size: 2.2rem; }
+      .birthday-icon { font-size: 3rem; }
+      .age-badge { font-size: 1rem; padding: 0.4rem 1rem; }
+      .message { font-size: 0.92rem; }
+      .btn-burst { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+      .loading-text { font-size: 1.3rem; }
+      .liquid-loader { width: 100px; height: 100px; }
+      .floating-balloon { font-size: 2rem; }
+      .quiz-question { font-size: 1rem; }
+      .quiz-answer { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="liquid-bg">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+  </div>
+
+  <div id="balloonRainContainer" class="balloon-container"></div>
+  <div class="side-balloons">🎈🎂🎈✨</div>
+  <div class="side-balloons side-balloons-left">🎀🎁🎈💖</div>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="liquid-loader"></div>
+      <div class="loading-text">🎈 HAPPY BIRTHDAY HILDA! 🎈<br> HAGD 🔥</div>
+      <div class="loading-sub">🚀 loading your celebration...</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="mainContent" class="birthday-container">
+    <div class="glass-card">
+      <div class="birthday-icon">
+        <i class="fas fa-crown"></i> <i class="fas fa-birthday-cake"></i>
+      </div>
+      <h1>HILDA! 🎂✨</h1>
+      <div class="age-badge">
+        <i class="fas fa-champagne-glasses"></i> LEVEL 21 UNLOCKED · 2005 → 2026 <i class="fas fa-sparkles"></i>
+      </div>
+      <div class="birthday-date">
+        <i class="far fa-calendar-alt"></i> April 18 — The Main Character Day
+      </div>
+      <div class="message">
+        <span class="highlight">🔥 TODAY, THE PARTY FINDS YOU 🔥</span><br><br>
+        Happy 21st, my absolute legend of a sister, <strong>Hilda</strong>! Born in 2005, you’ve turned every moment into a vibe. <br><br>
+        🥂 <strong>“DAY 21: A new era of greatness.”</strong> From chaotic giggles to deep talks — you’re pure magic. <br><br>
+        May your 21st year be packed with glittering wins, electric sunsets, and a heart that stays wild & free. You deserve confetti every single day. 🎉<br><br>
+        <span style="font-size: 1.05rem;">💥 <i class="fas fa-heart" style="color:#ff6b9d;"></i> Shine bright, shine fearless, shine exactly as you are. 💥</span>
+      </div>
+
+      <!-- QUIZ SECTION: 9 + 10 -->
+      <div class="quiz-section">
+        <div class="quiz-question">
+          <i class="fas fa-question-circle"></i> <span>What's 9 plus 10?</span> <i class="fas fa-smile-wink"></i>
+        </div>
+        <button id="revealAnswerBtn" class="quiz-btn"><i class="fas fa-magic"></i> Reveal Answer</button>
+        <div id="quizAnswerDisplay" class="quiz-answer">🎉 21! 🎉</div>
+      </div>
+
+      <div class="signature">
+        <i class="fas fa-feather-alt"></i> Endless love,<br> 
+        <strong>Your Brother 💙</strong> + the whole squad
+      </div>
+      <div class="year-badge">
+        <i class="fas fa-calculator"></i> Born April 18, 2005 → Turning 21 today! Welcome to the big leagues ✨
+      </div>
+      <div>
+        <button id="confettiButton" class="btn-burst"><i class="fas fa-hand-sparkles"></i> POP CONFETTI</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Age fix and dynamic display
+    const finalAge = 21;
+    document.querySelectorAll('.age-badge, .year-badge').forEach(el => {
+      if(el.classList.contains('age-badge')) el.innerHTML = `<i class="fas fa-champagne-glasses"></i> LEVEL 21 UNLOCKED · 2005 → 2026 <i class="fas fa-sparkles"></i>`;
+      if(el.classList.contains('year-badge')) el.innerHTML = `<i class="fas fa-calculator"></i> Born April 18, 2005 → Turning ${finalAge} today! Welcome to the big leagues ✨`;
+    });
+
+    // EPIC CONFETTI
+    function fireSuperConfetti() {
+      canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, startVelocity: 20, colors: ['#ffb7c5', '#ffd966', '#ff9f4a', '#a0d6ff', '#ff6b9d'] });
+      setTimeout(() => {
+        canvasConfetti({ particleCount: 120, angle: 60, spread: 70, origin: { x: 0, y: 0.7 }, colors: ['#ffa07a', '#fbc2c2', '#b0e0ff'] });
+        canvasConfetti({ particleCount: 120, angle: 120, spread: 70, origin: { x: 1, y: 0.7 }, colors: ['#ffb347', '#ff85a1', '#c3bef0'] });
+      }, 150);
+      setTimeout(() => {
+        canvasConfetti({ particleCount: 300, spread: 130, origin: { y: 0.5 }, startVelocity: 22, colors: ['#f9d56e', '#f3a683', '#d9b8ff', '#ffb347'] });
+      }, 400);
+    }
+
+    // mini confetti for answer
+    function miniConfettiBurst() {
+      canvasConfetti({ particleCount: 80, spread: 55, origin: { y: 0.7 }, startVelocity: 12, colors: ['#ffb347', '#ff6b6b', '#ffd966'] });
+    }
+
+    // Balloon rain
+    function spawnBalloons() {
+      const container = document.getElementById('balloonRainContainer');
+      if(!container) return;
+      for(let i = 0; i < 45; i++) {
+        setTimeout(() => {
+          const balloon = document.createElement('div');
+          balloon.className = 'floating-balloon';
+          balloon.innerText = '🎈';
+          const leftPos = Math.random() * 100;
+          const duration = 5 + Math.random() * 6;
+          const delay = Math.random() * 3;
+          balloon.style.left = `${leftPos}%`;
+          balloon.style.animationDuration = `${duration}s`;
+          balloon.style.animationDelay = `${delay}s`;
+          balloon.style.fontSize = `${1.8 + Math.random() * 1.5}rem`;
+          balloon.style.opacity = 0.7 + Math.random() * 0.3;
+          container.appendChild(balloon);
+          setTimeout(() => { if(balloon && balloon.remove) balloon.remove(); }, duration * 1000 + 1000);
+        }, i * 120);
+      }
+      let interval = setInterval(() => {
+        if(!document.getElementById('balloonRainContainer')) return clearInterval(interval);
+        const balloon = document.createElement('div');
+        balloon.className = 'floating-balloon';
+        balloon.innerText = '🎈';
+        balloon.style.left = `${Math.random() * 100}%`;
+        balloon.style.animationDuration = `${5 + Math.random() * 5}s`;
+        balloon.style.fontSize = `${1.8 + Math.random() * 1.5}rem`;
+        document.getElementById('balloonRainContainer').appendChild(balloon);
+        setTimeout(() => { if(balloon && balloon.remove) balloon.remove(); }, 8000);
+      }, 2800);
+      setTimeout(() => clearInterval(interval), 20000);
+    }
+
+    // Loading finish
+    const overlay = document.getElementById('loadingOverlay');
+    const main = document.getElementById('mainContent');
+    let finished = false;
+
+    function endLoadingAndCelebrate() {
+      if(finished) return;
+      finished = true;
+      overlay.style.opacity = '0';
+      overlay.style.visibility = 'hidden';
+      setTimeout(() => overlay.style.display = 'none', 800);
+      main.classList.add('visible');
+      setTimeout(() => {
+        fireSuperConfetti();
+        fireSuperConfetti();
+        spawnBalloons();
+        setTimeout(() => {
+          canvasConfetti({ particleCount: 80, spread: 45, origin: { x: 0.2, y: 0.8 } });
+          canvasConfetti({ particleCount: 80, spread: 45, origin: { x: 0.8, y: 0.8 } });
+        }, 500);
+      }, 200);
+    }
+
+    setTimeout(endLoadingAndCelebrate, 2500);
+    window.addEventListener('load', () => { if(!finished) setTimeout(endLoadingAndCelebrate, 2000); });
+
+    // Confetti button
+    const btn = document.getElementById('confettiButton');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      fireSuperConfetti();
+      btn.style.transform = 'scale(0.95)';
+      setTimeout(() => btn.style.transform = '', 150);
+    });
+
+    // QUIZ: 9 + 10 = 21 with cool animations
+    const revealBtn = document.getElementById('revealAnswerBtn');
+    const answerDiv = document.getElementById('quizAnswerDisplay');
+    let answerRevealed = false;
+    revealBtn.addEventListener('click', () => {
+      if(answerRevealed) {
+        // just re-trigger animation
+        answerDiv.classList.remove('show');
+        setTimeout(() => {
+          answerDiv.classList.add('show');
+          miniConfettiBurst();
+        }, 10);
+      } else {
+        answerDiv.classList.add('show');
+        miniConfettiBurst();
+        answerRevealed = true;
+      }
+      // Also trigger a small confetti cascade around the quiz area
+      canvasConfetti({ particleCount: 40, spread: 40, origin: { y: 0.65, x: 0.5 }, startVelocity: 10 });
+    });
+
+    // Card tilt effects
+    const card = document.querySelector('.glass-card');
+    if(card && window.innerWidth > 768) {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const rotateX = (y - rect.height/2) / 35;
+        const rotateY = (x - rect.width/2) / 35;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+      });
+      card.addEventListener('mouseleave', () => card.style.transform = '');
+    } else if(card) {
+      card.addEventListener('touchstart', () => {
+        card.style.transform = 'scale(0.98)';
+        setTimeout(() => card.style.transform = '', 120);
+      });
+    }
+  </script>
+</body>
+</html>
