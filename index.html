@@ -1,0 +1,240 @@
+```html id="interactive_final"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hilda • Interactive Cosmos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+}
+
+/* 🌌 CANVAS */
+canvas { display:block; }
+
+/* 💎 UI */
+#ui {
+  position: fixed;
+  inset: 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  pointer-events:none;
+  color:white;
+  z-index:10;
+}
+
+.card {
+  width: 80%;
+  max-width: 800px;
+  padding: 35px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+  text-align:center;
+  box-shadow: 0 0 60px rgba(255,0,180,0.25);
+}
+
+h1 { font-size: 2rem; }
+p { font-size: 1rem; opacity:0.9; line-height:1.6; }
+</style>
+</head>
+
+<body>
+
+<div id="ui">
+  <div class="card">
+    <h1>Happy 21st Hilda 🎉</h1>
+    <p>
+      A universe doesn’t just celebrate you… it reacts to you.<br><br>
+
+      Every click, every moment, every spark — this world responds to your energy.<br><br>
+
+      💥 You are not watching the universe.<br>
+      You are interacting with it.
+    </p>
+  </div>
+</div>
+
+<script>
+
+/* =========================
+   🪐 SCENE SETUP
+========================= */
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
+camera.position.z = 60;
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+/* =========================
+   🌌 GALAXY
+========================= */
+const count = 6000;
+const geo = new THREE.BufferGeometry();
+const pos = [];
+
+for(let i=0;i<count;i++){
+  let a = i * 0.02;
+  let r = 5 + i * 0.01;
+
+  pos.push(
+    Math.cos(a)*r,
+    (Math.random()-0.5)*25,
+    Math.sin(a)*r
+  );
+}
+
+geo.setAttribute("position", new THREE.Float32BufferAttribute(pos,3));
+
+const mat = new THREE.PointsMaterial({
+  size:0.6,
+  color:0xffffff
+});
+
+const galaxy = new THREE.Points(geo,mat);
+scene.add(galaxy);
+
+/* 💖 CORE */
+const core = new THREE.Mesh(
+  new THREE.SphereGeometry(6,32,32),
+  new THREE.MeshBasicMaterial({color:0xff4fd8,wireframe:true})
+);
+scene.add(core);
+
+/* =========================
+   🎆 INTERACTIVE PARTICLES
+========================= */
+let particles = [];
+
+function explode(intensity=1){
+  const count = 40 * intensity;
+
+  for(let i=0;i<count;i++){
+    let angle = Math.random()*Math.PI*2;
+
+    particles.push({
+      x:0,y:0,z:0,
+      vx: Math.cos(angle)* (1.5+Math.random()),
+      vy: Math.sin(angle)* (1.5+Math.random()),
+      vz: (Math.random()-0.5),
+      life:100
+    });
+  }
+
+  cameraShake = 1.5 * intensity;
+}
+
+/* =========================
+   🌠 SHOOTING STARS
+========================= */
+let stars = [];
+
+function spawnStar(){
+  stars.push({
+    x:(Math.random()-0.5)*100,
+    y:50,
+    z:(Math.random()-0.5)*50,
+    vx:-2,
+    vy:-2
+  });
+}
+
+/* =========================
+   🧠 INTERACTION STATES
+========================= */
+let mouseX = 0;
+let mouseY = 0;
+let cameraShake = 0;
+
+/* 🖱️ MOUSE */
+window.addEventListener("mousemove",(e)=>{
+  mouseX = (e.clientX/window.innerWidth - 0.5)*2;
+  mouseY = (e.clientY/window.innerHeight - 0.5)*2;
+});
+
+/* 🖱️ CLICK */
+window.addEventListener("click",()=>{
+  explode(2);
+});
+
+/* 📱 SWIPE */
+let startX=0,startY=0;
+
+window.addEventListener("touchstart",(e)=>{
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+});
+
+window.addEventListener("touchend",(e)=>{
+  let dx = e.changedTouches[0].clientX - startX;
+  let dy = e.changedTouches[0].clientY - startY;
+
+  let intensity = Math.min(3, Math.abs(dx+dy)/100);
+
+  explode(intensity);
+});
+
+/* =========================
+   🔁 ANIMATION LOOP
+========================= */
+function animate(){
+  requestAnimationFrame(animate);
+
+  /* galaxy reacts to cursor */
+  galaxy.rotation.y += 0.001 + mouseX*0.002;
+  galaxy.rotation.x += mouseY*0.001;
+
+  core.rotation.y += 0.01;
+
+  /* particles */
+  particles.forEach(p=>{
+    p.x += p.vx;
+    p.y += p.vy;
+    p.z += p.vz;
+    p.life--;
+  });
+
+  /* camera reaction */
+  camera.position.x += (mouseX*5 - camera.position.x)*0.05;
+  camera.position.y += (-mouseY*5 - camera.position.y)*0.05;
+
+  if(cameraShake>0){
+    camera.position.x += (Math.random()-0.5)*cameraShake;
+    camera.position.y += (Math.random()-0.5)*cameraShake;
+    cameraShake *= 0.9;
+  }
+
+  /* auto stars */
+  if(Math.random()<0.02) spawnStar();
+
+  stars.forEach(s=>{
+    s.x += s.vx;
+    s.y += s.vy;
+  });
+
+  renderer.render(scene,camera);
+}
+
+animate();
+
+/* 📏 RESIZE */
+window.addEventListener("resize",()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+</script>
+</body>
+</html>
+```
